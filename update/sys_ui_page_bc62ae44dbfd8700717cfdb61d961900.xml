@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_ui_page">
+    <sys_ui_page action="INSERT_OR_UPDATE">
+        <category>general</category>
+        <client_script><![CDATA[//accordian code
+var acc = document.getElementsByClassName("accordion");
+var i=0;
+for(i = 0; i < acc.length; i++) {
+  acc[i].onclick = function() {
+    this.classList.toggle("active");
+    var panel = this.nextElementSibling;
+    if (panel.style.maxHeight){
+      panel.style.maxHeight = null;
+    } else {
+      panel.style.maxHeight = panel.scrollHeight + "px";
+    } 
+  };
+}
+
+function onLoad() {
+	//alert("bhaggi");
+	var ga = new GlideAjax('GetWorkflow');
+	ga.addParam('sysparm_name','GetWorkflow');
+	ga.getXML(populateRawJSOM);
+	get_catalog_items();
+}
+function populateRawJSOM(workflowresponse){
+	//alert('from populateRawJSOM');
+	var getWorkflow = workflowresponse.responseXML.documentElement.getAttribute("answer");
+	//g_form.clearValue('u_raw_json');
+	//g_form.setValue('u_raw_json', getWorkflow);
+	var raw_data=JSON.parse(getWorkflow);
+	var choice_index=0;
+	var choice_index1=0;
+	var uulist = document.getElementById('workflowlist');	//ul
+	for(var i=0;i<raw_data.length;i++)
+		{
+		var b=raw_data[i];
+		
+		for(var y in b)
+			{
+			var e=y;
+			var e1=b[e];
+			if(e=="name")
+				{
+					
+				//console.log('cataloglist:', e1);
+				// created list item dynamically and add it to list	
+				
+                var listItem = document.createElement('li');
+               listItem.appendChild(document.createTextNode(e1));
+                uulist.appendChild(listItem);		
+				console.log('e1:', e1);	
+					
+					// dynamicList	
+				//g_form.addOption('u_workflow_name',e1,e1,choice_index);
+				
+					
+				choice_index++;
+				
+			}
+		}
+		
+	}
+	
+}
+
+function get_catalog_items()
+{
+	//alert("catalog item");
+	var ga = new GlideAjax('GetWorkflow');
+	ga.addParam('sysparm_name','workflowdata');
+	ga.getXML(populateRawJSOM1);
+}
+function populateRawJSOM1(response)
+{
+	var choice=0;
+	var getWorkflow = response.responseXML.documentElement.getAttribute("answer");
+	//alert("catalog item");
+var m = getWorkflow.evalJSON();
+	var ulist=document.getElementById('cataloglist');
+for(var e=0;e<m.length;e++)
+		{
+		var m1=m[e];
+		//g_form.addOption('u_catalog_item',m1,m1,choice);
+			
+			var llist= document.createElement('li');
+			llist.appendChild(document.createTextNode(m1));
+			ulist.appendChild(llist);
+			
+			
+			
+		choice++;
+		}
+	}
+
+
+
+]]></client_script>
+        <description/>
+        <direct>false</direct>
+        <endpoint>x_aetp_vyom_automa_Vyom_Automation_PreviousApproach.do</endpoint>
+        <html><![CDATA[<?xml version="1.0" encoding="utf-8" ?>
+<j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:j2="null" xmlns:g2="null">
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.12/angular.min.js"></script>
+    
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"></link>
+    <style>
+        th,tr {
+    text-align: center;
+        
+}
+  
+		.mainHeader{
+		color: #B22222;
+		background-color:#FFDEAD;
+		
+		}
+		
+		
+    
+    <!--Accordian style-->
+
+button.accordion {
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 15px;
+    transition: 0.4s;
+}
+
+button.accordion.active, button.accordion:hover {
+    background-color: #ddd ;
+}
+
+button.accordion:after {
+    content: '\002B';
+    color: #777;
+    font-weight: bold;
+    float: right;
+    margin-left: 5px;
+}
+
+button.accordion.active:after {
+    content: "\2212";
+}
+
+div.subItem {
+    padding: 0 18px;
+    background-color: #D8BFD8;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+}
+<!--accordian-->
+
+    
+ </style>
+	
+	
+    
+    <!-- UI -->
+        
+        <div>
+            
+            <div style="font-size:30px;" class="mainHeader">
+                <center>Mapping Form</center>
+				
+            </div>
+            <hr></hr>
+			  
+			<div>behshid bhagyashree</div>
+			
+			<input type="button" class="but" value="Get Workflow" onClick="onLoad()"/>
+
+
+            <hr></hr>
+			
+			
+			
+			
+			
+			  <!-- table part-->            
+            <div style="border:5px">
+                <div class="col-sm-6"  >
+                <table class ="table table-hover table-stripped table-bordered" >
+                    
+                    <tr>
+                        <th>Catalogue</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button class="accordion">Header1</button>
+                                    <div class="subItem">
+                                    <ul id="cataloglist">
+                                       
+                                    </ul>
+                                    </div>
+                    
+                           
+                    </td>
+                    </tr>
+                    
+                    
+                    
+                </table>
+                </div>
+                <div class="col-sm-6" style= " ">
+                <table class ="table table-hover table-stripped table-bordered">
+                    
+                    <tr>
+                        <th>Workflow</th>
+                    </tr>
+                    <tr>
+                        <td>
+                        <button class="accordion">Header1</button>
+                                    <div class="subItem">
+                                    <ul id="workflowlist">
+                                  
+                                    </ul>
+                                    </div>
+                    
+                           
+                        </td>
+                    </tr>
+                    
+                </table>
+                </div>
+                <center>
+                <button type="submit" class="btn btn-default"> Relate</button>
+                </center>
+                
+            </div>
+            
+            <hr></hr>
+			
+			
+			
+			
+			 <!-- table part-->            
+            <div style="border:5px">
+                <div class="col-sm-6"  >
+                <table class ="table table-hover table-stripped table-bordered" >
+                    
+                    <tr>
+                        <th>Catlogue Attributes</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button class="accordion" >Header1</button>
+                                    <div class="subItem" >
+                                     <ul id="dynamicList">                                    </ul> 
+                                    </div>
+                    
+                            <button class="accordion">Header 2</button>
+                                    <div class="subItem">
+                                    <ul>
+                                  <li>abc</li>
+                                      <li>pqr</li>
+                                      <li>xyz</li>
+                                    </ul>
+                                    </div>
+                    </td>
+                    </tr>
+                    
+                </table>
+                </div>
+                <div class="col-sm-6" style= " ">
+                <table class ="table table-hover table-stripped table-bordered">
+                    
+                    <tr>
+                        <th>Workflow Elements</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button class="accordion">Header1</button>
+                                    <div class="subItem">
+                                    <ul>
+                                  <li>Coffee</li>
+                                      <li>Tea</li>
+                                      <li>Milk</li>
+                                    </ul>
+                                    </div>
+                    
+                            <button class="accordion">Header 2</button>
+                                    <div class="subItem">
+                                    <ul>
+                                  <li>Coffee</li>
+                                      <li>Tea</li>
+                                      <li>Milk</li>
+                                    </ul>
+                                    </div>
+                    </td>
+                    </tr>
+                    
+                </table>
+                </div>
+                <center>
+                <button type="submit" class="btn btn-default"> Map</button>
+                </center>
+                
+            </div>
+            
+
+    
+
+			
+			
+			
+	    </div>	
+	
+	
+	
+	
+    
+</j:jelly>  ]]></html>
+        <name>Vyom_Automation_PreviousApproach</name>
+        <processing_script/>
+        <sys_class_name>sys_ui_page</sys_class_name>
+        <sys_created_by>gajananb</sys_created_by>
+        <sys_created_on>2017-10-09 13:53:57</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>bc62ae44dbfd8700717cfdb61d961900</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Vyom_Automation_PreviousApproach</sys_name>
+        <sys_package display_value="Vyom_automation_edge" source="x_aetp_vyom_automa">53dfc773db1d0300b57aff971d9619ae</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Vyom_automation_edge">53dfc773db1d0300b57aff971d9619ae</sys_scope>
+        <sys_update_name>sys_ui_page_bc62ae44dbfd8700717cfdb61d961900</sys_update_name>
+        <sys_updated_by>gajananb</sys_updated_by>
+        <sys_updated_on>2017-10-09 13:53:57</sys_updated_on>
+    </sys_ui_page>
+</record_update>

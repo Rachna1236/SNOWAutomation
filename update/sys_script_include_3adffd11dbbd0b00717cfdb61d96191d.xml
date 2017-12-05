@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>false</active>
+        <api_name>x_aetp_vyom_automa.Vyom_getCatalogItem</api_name>
+        <client_callable>true</client_callable>
+        <description>Vyom_getCatalogItem</description>
+        <name>Vyom_getCatalogItem</name>
+        <script><![CDATA[var Vyom_getCatalogItem = Class.create();
+Vyom_getCatalogItem.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
+
+	getCatItems:function(){
+	    var getcatitem= new GlideRecord('sc_cat_item');
+		getcatitem.addQuery('sc_catalogs',newValue);
+	    getcatitem.query();
+		gs.addInfoMessage('from script include'+getcatitem.getRowCount());	
+		
+	}, 
+	
+    type: 'Vyom_getCatalogItem'
+});]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>gajananb</sys_created_by>
+        <sys_created_on>2017-10-13 08:49:02</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>3adffd11dbbd0b00717cfdb61d96191d</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Vyom_getCatalogItem</sys_name>
+        <sys_package display_value="Vyom_automation_edge" source="x_aetp_vyom_automa">53dfc773db1d0300b57aff971d9619ae</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Vyom_automation_edge">53dfc773db1d0300b57aff971d9619ae</sys_scope>
+        <sys_update_name>sys_script_include_3adffd11dbbd0b00717cfdb61d96191d</sys_update_name>
+        <sys_updated_by>gajananb</sys_updated_by>
+        <sys_updated_on>2017-10-13 09:03:31</sys_updated_on>
+    </sys_script_include>
+</record_update>

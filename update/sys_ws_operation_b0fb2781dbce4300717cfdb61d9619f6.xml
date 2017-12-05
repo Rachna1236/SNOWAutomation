@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_ws_operation">
+    <sys_ws_operation action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <consumes>application/json,application/xml,text/xml</consumes>
+        <consumes_customized>false</consumes_customized>
+        <default_operation_uri/>
+        <enforce_acl/>
+        <http_method>POST</http_method>
+        <name>update</name>
+        <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) {
+
+var reqBody= request.body.data;
+var FoundSrcID = '';
+var NotFoundSrcID='';	
+var fail='';
+var comp='';
+var prog='';
+var elementId='';
+//var reqID='';	
+//var statusFlag='';	
+  //var req=JSON.parse(reqBody);
+
+	//console.log(reqBody);
+Object.keys(reqBody).forEach(function(item) {
+	var source  = reqBody[item].sourceId;
+	var status = reqBody[item].status;
+	var AEID = reqBody[item].automationEdgeId;
+	var msg = reqBody[item].message;
+	
+	var gr = new GlideRecord('x_aetp_vyom_automa_ae_staging');
+	gr.addQuery('u_service_catalog_number',source);
+	gr.query();
+	
+		if(gr.getRowCount()!=0)
+			{
+			while(gr.next()) {
+				if(gr.status != 'Completed' || gr.status != 'Failure'){
+				gr.status = status;
+				gr.automationid = AEID;
+				gr.automation_status_message = msg;
+				gr.update();
+				}
+					
+  var serv_cat_num=source;
+	gs.addInfoMessage(serv_cat_num);
+  var statuss= status;
+  
+	var gr2=new GlideRecord('x_aetp_vyom_automa_ae_configuration');
+	  gr2.query();
+	while(gr2.next())
+		{
+			if(statuss=="Failure"){
+		  fail=gr2.getDisplayValue('aefailure');
+				gs.addInfoMessage("failure value"+fail);
+			}
+			
+			if(statuss=="Completed"){
+		  comp=gr2.getDisplayValue('aesuccess');
+				gs.addInfoMessage("success value"+comp);
+			}
+			
+			if(statuss=="InProgress"){
+		  prog=gr2.getDisplayValue('aesubmitted');
+				gs.addInfoMessage("progress value"+prog);
+			}
+				
+		}
+	var gr1=new GlideRecord('sc_req_item');
+	//gr1.addQuery(gr1.number,serv_cat_num);
+	gr1.query();
+		while(gr1.next()){
+			if(gr1.number == serv_cat_num && statuss=="Failure"){
+			//elementId=gr1.getValue('sys_id');
+				//reqID = gr1.getDisplayValue('request');
+				gr1.state=9;
+				gr1.comments=msg;
+				gr1.update();
+				gs.addInfoMessage("fff");
+			}
+			
+			if(gr1.number == serv_cat_num && statuss=="Completed"){
+				//elementId=gr1.getValue('sys_id');
+				//reqID = gr1.getDisplayValue('request');
+				gr1.state=8;
+				gr1.stage='complete';
+				gr1.comments=msg;
+				gr1.update();
+				gs.addInfoMessage("ccc");
+			}
+			
+			if(gr1.number == serv_cat_num && statuss=="InProgress"){
+				//elementId=gr1.getValue('sys_id');
+				//reqID = gr1.getDisplayValue('request');
+				gr1.comments=msg;
+				gr1.state=6;
+				gr1.update();
+				gs.addInfoMessage("ppp");
+			}
+		}
+// 			var gr5 = new GlideRecord('sc_req_item');
+// 				//gr5.addQuery('state',8);
+// 				gr5.query();
+// 			while(gr5.next()){
+// 				if(gr5.getValue('state')== 8 && gr5.getDisplayValue('request')==reqID){
+// 					statusFlag = 'Completed';
+// 				}
+// 				else{
+// 					statusFlag = 'notCompleted';
+// 				}
+// 				if(statusFlag=='Completed'){
+// 					var gr6 = new GlideRecord('sc_request');
+// 					gr6.request_state='Completed';
+// 					gr6.update();
+// 				}
+// 			}
+				
+		
+				
+				FoundSrcID = FoundSrcID+' '+source;
+				
+			}	
+		}
+	   else {
+		   NotFoundSrcID = NotFoundSrcID+' '+source;
+	   }
+});
+	response.setContentType('application/json');  
+    response.setStatus(200); 
+	var response_body = {  
+         "Records Found": FoundSrcID, 
+		"Records Not Found": NotFoundSrcID
+	};
+    var writer = response.getStreamWriter();  
+	writer.writeString(JSON.stringify(response_body)); 	
+})(request, response);]]></operation_script>
+        <operation_uri>/api/x_aetp_vyom_automa/automationrequests</operation_uri>
+        <produces>application/json,application/xml,text/xml</produces>
+        <produces_customized>false</produces_customized>
+        <relative_path>/</relative_path>
+        <request_example/>
+        <requires_acl_authorization>false</requires_acl_authorization>
+        <requires_authentication>true</requires_authentication>
+        <short_description/>
+        <sys_class_name>sys_ws_operation</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-10-25 08:04:52</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>b0fb2781dbce4300717cfdb61d9619f6</sys_id>
+        <sys_mod_count>72</sys_mod_count>
+        <sys_name>update</sys_name>
+        <sys_package display_value="Vyom_automation_edge" source="x_aetp_vyom_automa">53dfc773db1d0300b57aff971d9619ae</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Vyom_automation_edge">53dfc773db1d0300b57aff971d9619ae</sys_scope>
+        <sys_update_name>sys_ws_operation_b0fb2781dbce4300717cfdb61d9619f6</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2017-10-31 10:03:32</sys_updated_on>
+        <web_service_definition display_value="automationrequests">c1f9299edb798b00b57aff971d961917</web_service_definition>
+        <web_service_version/>
+    </sys_ws_operation>
+</record_update>
